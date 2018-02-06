@@ -4,4 +4,8 @@
     <string name="highScoreText">High Scores</string>
     <string name="title_activity_new_game">newGameActivity</string>
     <string name="title_activity_high_score">HighScoreActivity</string>
+    <string name="score">Score : </string>
+    <string name="time">Time : </string>
+    <string name="fly">I Fly</string>
+    <string name="noFly">I Can't</string>
 </resources>
