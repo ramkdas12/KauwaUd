@@ -22,19 +22,19 @@
         android:textSize="18sp" />
 
     <TextView
-        android:id="@+id/timeText"
+        android:id="@+id/lifeText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBaseline="@+id/textValue"
         android:layout_alignBottom="@+id/textValue"
         android:layout_marginEnd="32dp"
-        android:layout_toStartOf="@+id/timeValue"
-        android:text="@string/time"
-        android:textColor="@android:color/black"
-        android:textSize="18sp" />
+        android:layout_toStartOf="@+id/lifeValue"
+        android:text="@string/life"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body2" />
 
     <TextView
         android:id="@+id/textValue"
+        android:text="@string/initialScore"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/score"
@@ -44,10 +44,11 @@
         android:textSize="18sp" />
 
     <TextView
-        android:id="@+id/timeValue"
+        android:id="@+id/lifeValue"
+        android:text="@string/lifeScore"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/timeText"
+        android:layout_alignBottom="@+id/lifeText"
         android:layout_alignParentEnd="true"
         android:layout_marginEnd="45dp" />
 
@@ -55,10 +56,11 @@
         android:id="@+id/imageView"
         android:layout_width="@dimen/imageWidth"
         android:layout_height="@dimen/imageWidth"
+        android:layout_alignStart="@+id/score"
         android:layout_below="@+id/score"
         android:layout_marginTop="34dp"
-        android:layout_toStartOf="@+id/timeValue"
-        app:srcCompat="@drawable/man" />
+        android:contentDescription="@string/imageContent"
+        app:srcCompat="@drawable/eagle" />
 
     <Button
         android:id="@+id/fly"
@@ -66,8 +68,9 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignStart="@+id/imageView"
-        android:layout_marginBottom="22dp"
+        android:layout_marginBottom="25dp"
         android:background="@color/mainButtonColor"
+        android:onClick="checkFlyable"
         android:text="@string/fly" />
 
     <Button
@@ -77,6 +80,7 @@
         android:layout_alignBottom="@+id/fly"
         android:layout_alignEnd="@+id/imageView"
         android:background="@color/mainButtonColor"
+        android:onClick="checkFlyable"
         android:text="@string/noFly" />
 
 </android.widget.RelativeLayout>

@@ -16,9 +16,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void newGame(View view) {
-        System.out.println("Let us start");
         Intent intent = new Intent(this, newGameActivity.class);
-        intent.putExtra(MyText, "Let us play the game");
+        startActivity(intent);
+    }
+    public void highScore(View view){
+        Intent intent = new Intent(this, HighScoreActivity.class);
         startActivity(intent);
     }
 }

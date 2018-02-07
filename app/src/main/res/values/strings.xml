@@ -5,7 +5,13 @@
     <string name="title_activity_new_game">newGameActivity</string>
     <string name="title_activity_high_score">HighScoreActivity</string>
     <string name="score">Score : </string>
-    <string name="time">Time : </string>
+    <string name="life">Life : </string>
+    <string name="initialScore">0</string>
+    <string name="lifeScore">3</string>
     <string name="fly">I Fly</string>
-    <string name="noFly">I Can't</string>
+    <string name="noFly">I Cannot</string>
+    <string name="gameOverTitle">Your Score</string>
+    <string name="newGameString">New Game</string>
+    <string name="gameEndString">Exit</string>
+    <string name="imageContent">Load Images here</string>
 </resources>
