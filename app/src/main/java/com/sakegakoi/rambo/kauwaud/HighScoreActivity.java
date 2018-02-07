@@ -1,30 +1,33 @@
 package com.sakegakoi.rambo.kauwaud;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.view.View;
+import android.widget.TextView;
 
 public class HighScoreActivity extends AppCompatActivity {
 
+    Context context = null;
+    SharedPreferences sharedPref = null;
+    TextView highScore = null;
+    TextView savedTime = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_high_score);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        context = getApplicationContext();
+        highScore = findViewById(R.id.highScore);
+        savedTime = findViewById(R.id.savedTime);
+        sharedPref = context.getSharedPreferences(
+                getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+        long highScoreValue = sharedPref.getInt(getString(R.string.saved_high_score), 1);
+        String savedTimeValue = sharedPref.getString(getString(R.string.savedTime), "01/01/2017");
+        String newHighScoreValue = highScoreValue + "";
+        System.out.println(highScoreValue);
+        System.out.println(savedTimeValue);
+        highScore.setText(newHighScoreValue);
+        savedTime.setText(savedTimeValue);
     }
 
 }

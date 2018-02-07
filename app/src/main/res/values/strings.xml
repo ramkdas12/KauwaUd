@@ -14,4 +14,7 @@
     <string name="newGameString">New Game</string>
     <string name="gameEndString">Exit</string>
     <string name="imageContent">Load Images here</string>
+    <string name="preference_file_key">saveData</string>
+    <string name="saved_high_score">High Score</string>
+    <string name="savedTime">Time</string>
 </resources>
