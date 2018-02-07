@@ -1,64 +1,156 @@
 package com.sakegakoi.rambo.kauwaud;
 
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Iterator;
 import java.util.Random;
 
 public class newGameActivity extends AppCompatActivity {
+
+    final Handler handler = new Handler();
+    final long timeInterval = 1000;
+    JSONObject imageLoaded = null;
+    Runnable r = null;
+    TextView score = null;
+    TextView life = null;
+    int gameScore = 0;
+    int lifeScore = 3;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_game);
-        final ImageView image = (ImageView) findViewById(R.id.imageView);
+        final ImageView image = findViewById(R.id.imageView);
         image.setImageResource(R.drawable.eagle);
+        score = findViewById(R.id.textValue);
+        life = findViewById(R.id.lifeValue);
+        life.setText("3");
+        score.setText("0");
         String imageString = loadJSONFromAsset();
-        final long timeInterval = 1000;
-        try{
+        final ProgressDialog progress = new ProgressDialog(this);
+        progress.setTitle("Loading");
+        progress.setMessage("Wait while loading...");
+        progress.setCancelable(false);
+        progress.show();// disable dismiss by tapping outside of the dialog
+        try {
             JSONObject object = new JSONObject(imageString);
             JSONObject getObject = object.getJSONObject("images");
             final JSONArray getArray = getObject.getJSONArray("imageArray");
-            final Handler handler = new Handler();
-            final Runnable r = new Runnable() {
-                public void run(){
+            r = new Runnable() {
+                public void run() {
                     try {
                         int n = getRandomNumber(getArray);
                         JSONObject imageObject = getArray.getJSONObject(n - 1);
+                        imageLoaded = imageObject;
                         String imageName = imageObject.get("name").toString();
-                        System.out.println(imageName);
-                        int res = getResources().getIdentifier( imageName, "drawable", getApplicationContext().getPackageName());
+                        int res = getResources().getIdentifier(imageName, "drawable", getApplicationContext().getPackageName());
                         image.setImageResource(res);
-                        handler.postDelayed(this, 3000);//set to go off again in 3 seconds.
-                    } catch (Exception e){
+                        handler.postDelayed(this, timeInterval);//set to go off again in 3 seconds.
+                        if (progress.isShowing()) {
+                            progress.dismiss();
+                        }
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
             };
-            handler.postDelayed(r,3000);
-        } catch(Exception e) {
+            handler.postDelayed(r, timeInterval);
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
+    public void checkFlyable(View arg) {
+        handler.removeCallbacksAndMessages(null);
+        Button button = (Button) arg;
+        String buttonText = button.getText().toString();
+        try {
+            Boolean isFlyable = (Boolean) imageLoaded.get("flying");
+            if (isFlyable && buttonText.equalsIgnoreCase("I fly")) {
+                gameScore++;
+            } else if (!isFlyable && buttonText.equalsIgnoreCase("I cannot")) {
+                gameScore++;
+            } else {
+                gameScore--;
+                lifeScore--;
+            }
+            if (lifeScore == 0) {
+                showDialog();
+            } else {
+                score = findViewById(R.id.textValue);
+                String newScore = gameScore + "";
+                String newLife = lifeScore + "";
+                life.setText(newLife);
+                score.setText(newScore);
+                handler.postDelayed(r, timeInterval);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void showDialog() throws Resources.NotFoundException {
+        String finalScore = gameScore + "";
+        new AlertDialog.Builder(this)
+                .setTitle(getResources().getString(R.string.gameOverTitle))
+                .setMessage(finalScore)
+                .setIcon(
+                        getResources().getDrawable(
+                                android.R.drawable.ic_dialog_alert))
+                .setPositiveButton(
+                        getResources().getString(R.string.newGameString),
+                        new DialogInterface.OnClickListener() {
+
+                            @Override
+                            public void onClick(DialogInterface dialog,
+                                                int which) {
+                                //@todo add score to high score module
+                                Intent intent = getIntent();
+                                finish();
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                startActivity(intent);
+                            }
+                        })
+                .setNegativeButton(
+                        getResources().getString(R.string.gameEndString),
+                        new DialogInterface.OnClickListener() {
+
+                            @Override
+                            public void onClick(DialogInterface dialog,
+                                                int which) {
+                                //@ToDo Add score to high score module
+                                Intent intent = getIntent();
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                finish();
+                                Intent parent = new Intent(getApplicationContext(), MainActivity.class);
+                                parent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                startActivity(parent);
+                            }
+                        }).setCancelable(false).show();
+    }
+
     public int getRandomNumber(JSONArray imageArray) {
         Random random = new Random();
-        int n = random.nextInt(imageArray.length() - 1) + 1;
-        return n;
+        return random.nextInt(imageArray.length() - 1) + 1;
     }
 
     public String loadJSONFromAsset() {
-        String json = null;
         try {
             InputStream is = getAssets().open("image_info.json");
 
@@ -70,14 +162,14 @@ public class newGameActivity extends AppCompatActivity {
 
             is.close();
 
-            json = new String(buffer, "UTF-8");
+            String json = new String(buffer, "UTF-8");
 
+            return json;
 
         } catch (IOException ex) {
             ex.printStackTrace();
             return null;
         }
-        return json;
 
     }
 
