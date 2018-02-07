@@ -2,6 +2,7 @@ package com.sakegakoi.rambo.kauwaud;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.arch.persistence.room.Room;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -36,6 +37,7 @@ public class newGameActivity extends AppCompatActivity {
     int lifeScore = 3;
     Context context = null;
     SharedPreferences sharedPref = null;
+    private HighScoreDao highScoreDao;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,6 +57,9 @@ public class newGameActivity extends AppCompatActivity {
         context = getApplicationContext();
         sharedPref = context.getSharedPreferences(
                 getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+        AppDataBase db = Room.databaseBuilder(getApplicationContext(),
+                AppDataBase.class, "HighScore").allowMainThreadQueries().fallbackToDestructiveMigration().build();
+        highScoreDao = db.highScoreDao();
         try {
             JSONObject object = new JSONObject(imageString);
             JSONObject getObject = object.getJSONObject("images");
@@ -135,6 +140,10 @@ public class newGameActivity extends AppCompatActivity {
                                 String newDate = date.toString();
                                 editor.putString(getString(R.string.savedTime), newDate);
                                 editor.commit();
+                                HighScore highScore = new HighScore();
+                                highScore.score = gameScore;
+                                highScore.savedTime = newDate;
+                                highScoreDao.insert(highScore);
                                 finish();
                                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                 startActivity(intent);
@@ -156,6 +165,10 @@ public class newGameActivity extends AppCompatActivity {
                                 String newDate = date.toString();
                                 editor.putString(getString(R.string.savedTime), newDate);
                                 editor.commit();
+                                HighScore highScore = new HighScore();
+                                highScore.score = gameScore;
+                                highScore.savedTime = newDate;
+                                highScoreDao.insert(highScore);
                                 finish();
                                 Intent parent = new Intent(getApplicationContext(), MainActivity.class);
                                 parent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
