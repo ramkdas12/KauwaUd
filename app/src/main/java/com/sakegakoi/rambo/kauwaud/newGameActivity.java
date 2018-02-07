@@ -2,8 +2,11 @@ package com.sakegakoi.rambo.kauwaud;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.arch.persistence.room.Room;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Handler;
@@ -19,6 +22,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Date;
 import java.util.Random;
 
 public class newGameActivity extends AppCompatActivity {
@@ -31,7 +35,9 @@ public class newGameActivity extends AppCompatActivity {
     TextView life = null;
     int gameScore = 0;
     int lifeScore = 3;
-
+    Context context = null;
+    SharedPreferences sharedPref = null;
+    private HighScoreDao highScoreDao;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,6 +54,12 @@ public class newGameActivity extends AppCompatActivity {
         progress.setMessage("Wait while loading...");
         progress.setCancelable(false);
         progress.show();// disable dismiss by tapping outside of the dialog
+        context = getApplicationContext();
+        sharedPref = context.getSharedPreferences(
+                getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+        AppDataBase db = Room.databaseBuilder(getApplicationContext(),
+                AppDataBase.class, "HighScore").allowMainThreadQueries().fallbackToDestructiveMigration().build();
+        highScoreDao = db.highScoreDao();
         try {
             JSONObject object = new JSONObject(imageString);
             JSONObject getObject = object.getJSONObject("images");
@@ -106,7 +118,7 @@ public class newGameActivity extends AppCompatActivity {
     }
 
     private void showDialog() throws Resources.NotFoundException {
-        String finalScore = gameScore + "";
+        final String finalScore = gameScore + "";
         new AlertDialog.Builder(this)
                 .setTitle(getResources().getString(R.string.gameOverTitle))
                 .setMessage(finalScore)
@@ -122,6 +134,16 @@ public class newGameActivity extends AppCompatActivity {
                                                 int which) {
                                 //@todo add score to high score module
                                 Intent intent = getIntent();
+                                SharedPreferences.Editor editor = sharedPref.edit();
+                                editor.putInt(getString(R.string.saved_high_score), gameScore);
+                                Date date = new Date();
+                                String newDate = date.toString();
+                                editor.putString(getString(R.string.savedTime), newDate);
+                                editor.commit();
+                                HighScore highScore = new HighScore();
+                                highScore.score = gameScore;
+                                highScore.savedTime = newDate;
+                                highScoreDao.insert(highScore);
                                 finish();
                                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                 startActivity(intent);
@@ -137,6 +159,16 @@ public class newGameActivity extends AppCompatActivity {
                                 //@ToDo Add score to high score module
                                 Intent intent = getIntent();
                                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                SharedPreferences.Editor editor = sharedPref.edit();
+                                editor.putInt(getString(R.string.saved_high_score), gameScore);
+                                Date date = new Date();
+                                String newDate = date.toString();
+                                editor.putString(getString(R.string.savedTime), newDate);
+                                editor.commit();
+                                HighScore highScore = new HighScore();
+                                highScore.score = gameScore;
+                                highScore.savedTime = newDate;
+                                highScoreDao.insert(highScore);
                                 finish();
                                 Intent parent = new Intent(getApplicationContext(), MainActivity.class);
                                 parent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
