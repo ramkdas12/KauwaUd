@@ -7,8 +7,6 @@ import android.view.View;
 
 public class MainActivity extends AppCompatActivity {
 
-    public static final String MyText = "com.sakegakoi.rambo.kauwaud.string";
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

@@ -28,5 +28,6 @@
         android:layout_marginBottom="157dp"
         android:layout_weight="1"
         android:background="@color/mainButtonColor"
+        android:onClick="highScore"
         android:text="@string/highScoreText" />
 </android.widget.RelativeLayout>
