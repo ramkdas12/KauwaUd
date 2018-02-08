@@ -132,7 +132,7 @@ public class newGameActivity extends AppCompatActivity {
                             @Override
                             public void onClick(DialogInterface dialog,
                                                 int which) {
-                                //@todo add score to high score module
+                                //@todo Remove SHaredPreferences Code
                                 Intent intent = getIntent();
                                 SharedPreferences.Editor editor = sharedPref.edit();
                                 editor.putInt(getString(R.string.saved_high_score), gameScore);
@@ -156,7 +156,7 @@ public class newGameActivity extends AppCompatActivity {
                             @Override
                             public void onClick(DialogInterface dialog,
                                                 int which) {
-                                //@ToDo Add score to high score module
+                                //@ToDo Remove Shared Preferences Code
                                 Intent intent = getIntent();
                                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                 SharedPreferences.Editor editor = sharedPref.edit();
