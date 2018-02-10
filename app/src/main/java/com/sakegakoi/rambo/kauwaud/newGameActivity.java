@@ -28,7 +28,7 @@ import java.util.Random;
 public class newGameActivity extends AppCompatActivity {
 
     final Handler handler = new Handler();
-    final long timeInterval = 1000;
+    final long timeInterval = 3000;
     JSONObject imageLoaded = null;
     Runnable r = null;
     TextView score = null;
@@ -38,6 +38,8 @@ public class newGameActivity extends AppCompatActivity {
     Context context = null;
     SharedPreferences sharedPref = null;
     private HighScoreDao highScoreDao;
+    Button fly = null;
+    Button notFly = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,6 +48,8 @@ public class newGameActivity extends AppCompatActivity {
         image.setImageResource(R.drawable.eagle);
         score = findViewById(R.id.textValue);
         life = findViewById(R.id.lifeValue);
+        fly = findViewById(R.id.fly);
+        notFly = findViewById(R.id.noFly);
         life.setText("3");
         score.setText("0");
         String imageString = loadJSONFromAsset();
@@ -67,6 +71,8 @@ public class newGameActivity extends AppCompatActivity {
             r = new Runnable() {
                 public void run() {
                     try {
+                        fly.setEnabled(true);
+                        notFly.setEnabled(true);
                         int n = getRandomNumber(getArray);
                         JSONObject imageObject = getArray.getJSONObject(n - 1);
                         imageLoaded = imageObject;
@@ -92,6 +98,8 @@ public class newGameActivity extends AppCompatActivity {
         handler.removeCallbacksAndMessages(null);
         Button button = (Button) arg;
         String buttonText = button.getText().toString();
+        fly.setEnabled(false);
+        notFly.setEnabled(false);
         try {
             Boolean isFlyable = (Boolean) imageLoaded.get("flying");
             if (isFlyable && buttonText.equalsIgnoreCase("I fly")) {
@@ -99,7 +107,6 @@ public class newGameActivity extends AppCompatActivity {
             } else if (!isFlyable && buttonText.equalsIgnoreCase("I cannot")) {
                 gameScore++;
             } else {
-                gameScore--;
                 lifeScore--;
             }
             if (lifeScore == 0) {
@@ -132,7 +139,7 @@ public class newGameActivity extends AppCompatActivity {
                             @Override
                             public void onClick(DialogInterface dialog,
                                                 int which) {
-                                //@todo add score to high score module
+                                //@todo Remove SHaredPreferences Code
                                 Intent intent = getIntent();
                                 SharedPreferences.Editor editor = sharedPref.edit();
                                 editor.putInt(getString(R.string.saved_high_score), gameScore);
@@ -156,7 +163,7 @@ public class newGameActivity extends AppCompatActivity {
                             @Override
                             public void onClick(DialogInterface dialog,
                                                 int which) {
-                                //@ToDo Add score to high score module
+                                //@ToDo Remove Shared Preferences Code
                                 Intent intent = getIntent();
                                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                 SharedPreferences.Editor editor = sharedPref.edit();
