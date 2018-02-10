@@ -1,57 +1,71 @@
 package com.sakegakoi.rambo.kauwaud;
 
 import android.arch.persistence.room.Room;
-import android.content.Context;
-import android.content.SharedPreferences;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.widget.LinearLayout;
+import android.widget.TableLayout;
+import android.widget.TableRow;
 import android.widget.TextView;
 
 import java.util.List;
 
 public class HighScoreActivity extends AppCompatActivity {
 
-    Context context = null;
-    SharedPreferences sharedPref = null;
-    TextView highScore = null;
-    TextView savedTime = null;
-    private HighScoreDao highScoreDao;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_high_score);
-        context = getApplicationContext();
-        highScore = findViewById(R.id.highScore);
-        savedTime = findViewById(R.id.savedTime);
-        sharedPref = context.getSharedPreferences(
-                getString(R.string.preference_file_key), Context.MODE_PRIVATE);
-        long highScoreValue = sharedPref.getInt(getString(R.string.saved_high_score), 1);
-        String savedTimeValue = sharedPref.getString(getString(R.string.savedTime), "01/01/2017");
-        String newHighScoreValue = highScoreValue + "";
-        System.out.println(highScoreValue);
-        System.out.println(savedTimeValue);
-        //highScore.setText(newHighScoreValue);
-        //savedTime.setText(savedTimeValue);
+
         AppDataBase db = Room.databaseBuilder(getApplicationContext(),
                 AppDataBase.class, "HighScore").allowMainThreadQueries().fallbackToDestructiveMigration().build();
-        highScoreDao = db.highScoreDao();
+        HighScoreDao highScoreDao = db.highScoreDao();
         List<HighScore> highScores = highScoreDao.getSortedAll();
-        int N = highScores.size();
-        final TextView[] myTextViews = new TextView[N];
-        LinearLayout lView = (LinearLayout) findViewById(R.id.linearLayout);
-        for (HighScore element : highScores) {
-            final TextView score = new TextView(this);
-            final TextView time = new TextView(this);
-            score.setText(element.score + "");
-            time.setText(element.savedTime);
-            lView.addView(score);
-            lView.addView(time);
-            System.out.println(element.id);
-            System.out.println(element.score);
-            System.out.println(element.savedTime);
+        TableLayout tableLayout = findViewById(R.id.tableLayout);
+        for (int i = 0; i <= highScores.size(); i++) {
+
+            TableRow row = new TableRow(this);
+
+            for (int j = 0; j < 2; j++) {
+
+                TextView cell = new android.support.v7.widget.AppCompatTextView(this){
+                    @Override
+                    protected void onDraw(Canvas canvas) {
+                        super.onDraw(canvas);
+                        Rect rect = new Rect();
+                        Paint paint = new Paint();
+                        paint.setStyle(Paint.Style.STROKE);
+                        paint.setColor(Color.BLUE);
+                        paint.setStrokeWidth(2);
+                        getLocalVisibleRect(rect);
+                        canvas.drawRect(rect, paint);
+                    }
+
+                };
+                if ( i == 0 ) {
+                    if ( j == 0 ) {
+                        cell.setText("High Score");
+                    } else if ( j == 1 ){
+                        cell.setText("Time Played");
+                    }
+                } else {
+                    HighScore highScore = highScores.get(i - 1);
+                    if ( j == 0 ) {
+                        cell.setText(highScore.score + "");
+                    } else if ( j == 1 ){
+                        cell.setText(highScore.savedTime);
+                    }
+                }
+
+                cell.setPadding(6, 4, 6, 4);
+                row.addView(cell);
+
+            }
+
+            tableLayout.addView(row);
         }
     }
-
 }
