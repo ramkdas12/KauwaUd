@@ -22,6 +22,6 @@ public interface HighScoreDao {
     void insert(HighScore highScore);
 
     @Delete
-    public void deleteHighScores(HighScore... highScores);
+    void deleteHighScores(HighScore... highScores);
 
 }
