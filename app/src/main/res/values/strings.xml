@@ -17,4 +17,6 @@
     <string name="preference_file_key">saveData</string>
     <string name="saved_high_score">High Score</string>
     <string name="savedTime">Time</string>
+    <string name="yesText">Yes</string>
+    <string name="noText">No</string>
 </resources>
