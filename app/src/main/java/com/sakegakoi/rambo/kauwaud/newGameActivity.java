@@ -6,16 +6,15 @@ import android.arch.persistence.room.Room;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -36,7 +35,6 @@ public class newGameActivity extends AppCompatActivity {
     int gameScore = 0;
     int lifeScore = 3;
     Context context = null;
-    SharedPreferences sharedPref = null;
     private HighScoreDao highScoreDao;
     Button fly = null;
     Button notFly = null;
@@ -59,8 +57,6 @@ public class newGameActivity extends AppCompatActivity {
         progress.setCancelable(false);
         progress.show();// disable dismiss by tapping outside of the dialog
         context = getApplicationContext();
-        sharedPref = context.getSharedPreferences(
-                getString(R.string.preference_file_key), Context.MODE_PRIVATE);
         AppDataBase db = Room.databaseBuilder(getApplicationContext(),
                 AppDataBase.class, "HighScore").allowMainThreadQueries().fallbackToDestructiveMigration().build();
         highScoreDao = db.highScoreDao();
@@ -79,6 +75,7 @@ public class newGameActivity extends AppCompatActivity {
                         String imageName = imageObject.get("name").toString();
                         int res = getResources().getIdentifier(imageName, "drawable", getApplicationContext().getPackageName());
                         image.setImageResource(res);
+
                         handler.postDelayed(this, timeInterval);//set to go off again in 3 seconds.
                         if (progress.isShowing()) {
                             progress.dismiss();
@@ -108,6 +105,18 @@ public class newGameActivity extends AppCompatActivity {
                 gameScore++;
             } else {
                 lifeScore--;
+
+                Context context = getApplicationContext();
+                CharSequence text = "Hello toast!";
+                if (isFlyable) {
+                    text = "I fly";
+                } else {
+                    text = "I can't fly";
+                }
+                int duration = Toast.LENGTH_SHORT;
+
+                Toast toast = Toast.makeText(context, text, duration);
+                toast.show();
             }
             if (lifeScore == 0) {
                 showDialog();
@@ -125,6 +134,7 @@ public class newGameActivity extends AppCompatActivity {
     }
 
     private void showDialog() throws Resources.NotFoundException {
+        handler.removeCallbacksAndMessages(null);
         final String finalScore = gameScore + "";
         new AlertDialog.Builder(this)
                 .setTitle(getResources().getString(R.string.gameOverTitle))
@@ -141,12 +151,8 @@ public class newGameActivity extends AppCompatActivity {
                                                 int which) {
                                 //@todo Remove SHaredPreferences Code
                                 Intent intent = getIntent();
-                                SharedPreferences.Editor editor = sharedPref.edit();
-                                editor.putInt(getString(R.string.saved_high_score), gameScore);
                                 Date date = new Date();
                                 String newDate = date.toString();
-                                editor.putString(getString(R.string.savedTime), newDate);
-                                editor.commit();
                                 HighScore highScore = new HighScore();
                                 highScore.score = gameScore;
                                 highScore.savedTime = newDate;
@@ -166,12 +172,8 @@ public class newGameActivity extends AppCompatActivity {
                                 //@ToDo Remove Shared Preferences Code
                                 Intent intent = getIntent();
                                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                SharedPreferences.Editor editor = sharedPref.edit();
-                                editor.putInt(getString(R.string.saved_high_score), gameScore);
                                 Date date = new Date();
                                 String newDate = date.toString();
-                                editor.putString(getString(R.string.savedTime), newDate);
-                                editor.commit();
                                 HighScore highScore = new HighScore();
                                 highScore.score = gameScore;
                                 highScore.savedTime = newDate;
@@ -182,6 +184,52 @@ public class newGameActivity extends AppCompatActivity {
                                 startActivity(parent);
                             }
                         }).setCancelable(false).show();
+    }
+
+    @Override
+    public void onBackPressed() {
+        try {
+            handler.removeCallbacksAndMessages(null);
+            final String finalScore = gameScore + "";
+            new AlertDialog.Builder(this)
+            .setTitle(getResources().getString(R.string.gameEndString))
+            .setMessage(finalScore)
+            .setIcon(
+                getResources().getDrawable(
+                    android.R.drawable.ic_dialog_alert))
+            .setPositiveButton(
+                getResources().getString(R.string.yesText),
+                new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface dialog,
+                                        int which) {
+                    //@todo Remove SHaredPreferences Code
+                    Intent intent = getIntent();
+                    Date date = new Date();
+                    String newDate = date.toString();
+                    HighScore highScore = new HighScore();
+                    highScore.score = gameScore;
+                    highScore.savedTime = newDate;
+                    highScoreDao.insert(highScore);
+                    finish();
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(intent);
+                    }
+                })
+            .setNegativeButton(
+                getResources().getString(R.string.noText),
+                new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface dialog,
+                                        int which) {
+                        handler.postDelayed(r, timeInterval);
+                    }
+                }).setCancelable(false).show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public int getRandomNumber(JSONArray imageArray) {

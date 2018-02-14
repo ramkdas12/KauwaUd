@@ -17,7 +17,7 @@
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
             app:popupTheme="@style/AppTheme.PopupOverlay"
-            tools:title="Kauwa Ud" />
+            tools:title="@string/app_name" />
 
     </android.support.design.widget.AppBarLayout>
 
