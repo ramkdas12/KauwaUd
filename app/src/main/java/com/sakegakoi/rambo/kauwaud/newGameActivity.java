@@ -79,6 +79,7 @@ public class newGameActivity extends AppCompatActivity {
                         String imageName = imageObject.get("name").toString();
                         int res = getResources().getIdentifier(imageName, "drawable", getApplicationContext().getPackageName());
                         image.setImageResource(res);
+
                         handler.postDelayed(this, timeInterval);//set to go off again in 3 seconds.
                         if (progress.isShowing()) {
                             progress.dismiss();
@@ -125,6 +126,7 @@ public class newGameActivity extends AppCompatActivity {
     }
 
     private void showDialog() throws Resources.NotFoundException {
+        handler.removeCallbacksAndMessages(null);
         final String finalScore = gameScore + "";
         new AlertDialog.Builder(this)
                 .setTitle(getResources().getString(R.string.gameOverTitle))
@@ -182,6 +184,15 @@ public class newGameActivity extends AppCompatActivity {
                                 startActivity(parent);
                             }
                         }).setCancelable(false).show();
+    }
+
+    @Override
+    public void onBackPressed() {
+        try {
+            showDialog();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public int getRandomNumber(JSONArray imageArray) {

@@ -56,9 +56,9 @@
         android:id="@+id/imageView"
         android:layout_width="@dimen/imageWidth"
         android:layout_height="@dimen/imageWidth"
-        android:layout_alignStart="@+id/score"
         android:layout_below="@+id/score"
-        android:layout_marginTop="34dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="36dp"
         android:contentDescription="@string/imageContent"
         app:srcCompat="@drawable/eagle" />
 
