@@ -16,6 +16,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -109,6 +110,18 @@ public class newGameActivity extends AppCompatActivity {
                 gameScore++;
             } else {
                 lifeScore--;
+
+                Context context = getApplicationContext();
+                CharSequence text = "Hello toast!";
+                if (isFlyable) {
+                    text = "I fly";
+                } else {
+                    text = "I can't fly";
+                }
+                int duration = Toast.LENGTH_SHORT;
+
+                Toast toast = Toast.makeText(context, text, duration);
+                toast.show();
             }
             if (lifeScore == 0) {
                 showDialog();
