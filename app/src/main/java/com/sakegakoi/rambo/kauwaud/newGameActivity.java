@@ -27,7 +27,7 @@ import java.util.Random;
 public class newGameActivity extends AppCompatActivity {
 
     final Handler handler = new Handler();
-    final long timeInterval = 3000;
+    final long timeInterval = 2000;
     JSONObject imageLoaded = null;
     Runnable r = null;
     TextView score = null;
@@ -149,7 +149,6 @@ public class newGameActivity extends AppCompatActivity {
                             @Override
                             public void onClick(DialogInterface dialog,
                                                 int which) {
-                                //@todo Remove SHaredPreferences Code
                                 Intent intent = getIntent();
                                 Date date = new Date();
                                 String newDate = date.toString();
@@ -169,7 +168,6 @@ public class newGameActivity extends AppCompatActivity {
                             @Override
                             public void onClick(DialogInterface dialog,
                                                 int which) {
-                                //@ToDo Remove Shared Preferences Code
                                 Intent intent = getIntent();
                                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                 Date date = new Date();
@@ -192,8 +190,8 @@ public class newGameActivity extends AppCompatActivity {
             handler.removeCallbacksAndMessages(null);
             final String finalScore = gameScore + "";
             new AlertDialog.Builder(this)
-            .setTitle(getResources().getString(R.string.gameEndString))
-            .setMessage(finalScore)
+            .setTitle(getResources().getString(R.string.endGameText))
+            .setMessage(getResources().getString(R.string.gameOverTitle) + " " + finalScore)
             .setIcon(
                 getResources().getDrawable(
                     android.R.drawable.ic_dialog_alert))
@@ -204,7 +202,6 @@ public class newGameActivity extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialog,
                                         int which) {
-                    //@todo Remove SHaredPreferences Code
                     Intent intent = getIntent();
                     Date date = new Date();
                     String newDate = date.toString();

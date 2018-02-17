@@ -19,4 +19,5 @@
     <string name="savedTime">Time</string>
     <string name="yesText">Yes</string>
     <string name="noText">No</string>
+    <string name="endGameText">Exit ?</string>
 </resources>
