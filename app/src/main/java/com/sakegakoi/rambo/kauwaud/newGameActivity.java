@@ -212,9 +212,8 @@ public class newGameActivity extends AppCompatActivity {
                     highScore.score = gameScore;
                     highScore.savedTime = newDate;
                     highScoreDao.insert(highScore);
-                    finish();
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    startActivity(intent);
+                    finish();
                     }
                 })
             .setNegativeButton(
